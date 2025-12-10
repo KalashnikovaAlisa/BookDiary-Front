@@ -1,0 +1,135 @@
+/* Глобальные стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5e6d3; /* светло-коричневый фон */
+  color: #2c1810; /* темно-коричневый текст */
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Общие стили для всех страниц */
+.page-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* Общие стили кнопок */
+button {
+  background: linear-gradient(145deg, #ffd700, #ffed4e);
+  border: 2px solid #2c1810;
+  border-radius: 8px;
+  padding: 12px 20px;
+  color: #2c1810;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+button:hover {
+  background: linear-gradient(145deg, #ffed4e, #ffd700);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 24, 16, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.active {
+  background: linear-gradient(145deg, #2c1810, #4a3429);
+  color: #ffd700;
+  border-color: #ffd700;
+}
+
+/* Общие стили инпутов */
+input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #2c1810;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c1810;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+  color: #2c1810;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+/* Карточки */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #2c1810;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(44, 24, 16, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(44, 24, 16, 0.15);
+}
+
+/* Утилитарные классы */
+.text-center {
+  text-align: center;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-15 {
+  gap: 15px;
+}
+
+.gap-20 {
+  gap: 20px;
+}

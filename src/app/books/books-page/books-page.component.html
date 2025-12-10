@@ -1,0 +1,96 @@
+<app-navbar></app-navbar>
+
+<div class="page-container">
+  <div class="search-controls">
+    <div class="search-input-group">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearch()" 
+        placeholder="Поиск по автору или названию"
+        class="search-input"
+      />
+      <button *ngIf="searchTerm" (click)="onClearSearch()" class="clear-btn">×</button>
+    </div>
+
+    <div class="genre-filters">
+      <span>Фильтр по жанру:</span>
+      <button (click)="filterByGenre(null)" [class.active]="(selectedGenre$ | async) === null">
+        Все жанры
+      </button>
+      <button (click)="filterByGenre('non-fiction')" [class.active]="(selectedGenre$ | async) === 'non-fiction'">
+        Non-fiction
+      </button>
+      <button (click)="filterByGenre('фантастика')" [class.active]="(selectedGenre$ | async) === 'фантастика'">
+        Фантастика
+      </button>
+      <button (click)="filterByGenre('детектив')" [class.active]="(selectedGenre$ | async) === 'детектив'">
+        Детективы
+      </button>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle">Ещё ▾</button>
+        <div class="dropdown-menu">
+          <button (click)="filterByGenre('бизнес книги')">Бизнес книги</button>
+          <button (click)="filterByGenre('для детей')">Для детей</button>
+          <button (click)="filterByGenre('зарубежная литература')">Зарубежная литература</button>
+          <button (click)="filterByGenre('зарубежная проза')">Зарубежная проза</button>
+          <button (click)="filterByGenre('здоровье')">Здоровье</button>
+          <button (click)="filterByGenre('исторический роман')">Исторический роман</button>
+          <button (click)="filterByGenre('любовный роман')">Любовный роман</button>
+          <button (click)="filterByGenre('наука и образование')">Наука и образование</button>
+          <button (click)="filterByGenre('поэзия')">Поэзия</button>
+          <button (click)="filterByGenre('психология')">Психология</button>
+          <button (click)="filterByGenre('религия')">Религия</button>
+          <button (click)="filterByGenre('русская классика')">Русская классика</button>
+          <button (click)="filterByGenre('фэнтези')">Фэнтези</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="books-container">
+    <ng-container *ngIf="filteredBooks$ | async as books; else loading">
+      <div *ngIf="selectedGenre$ | async as genre" class="selected-genre">
+        <span>Выбран жанр:</span>
+        <strong>{{ genre }}</strong>
+        <button (click)="filterByGenre(null)" class="clear-genre-btn" title="Очистить фильтр">×</button>
+      </div>
+      
+      <div *ngIf="books.length === 0" class="no-books-message">
+        {{ searchTerm || (selectedGenre$ | async) ? 'Книги не найдены' : 'Нет доступных книг' }}
+      </div>
+
+      <div *ngIf="books.length > 0" class="books-stats">
+        Найдено книг: {{ books.length }}
+      </div>
+
+      <div class="books-list">
+        <div *ngFor="let book of books; trackBy: trackByBookId" 
+             class="book-card"
+             (click)="openBookDetails(book)">
+          <div class="book-info">
+            <h3 class="book-title">{{ book.title }}</h3>
+            <div class="book-meta">
+              <p class="book-author">{{ book.author }}</p>
+              <button (click)="toggleFavorite(book); $event.stopPropagation()" 
+                      [class.favorited]="book.id && userBookStatuses[book.id]">
+                {{ book.id && userBookStatuses[book.id] ? '❤️' : '♡' }}
+              </button>
+            </div>
+            <span class="book-genre">{{ book.genre }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loading>
+      <div class="loading">Загрузка...</div>
+    </ng-template>
+  </div>
+</div>
+
+<app-book-details *ngIf="showBookDetails && selectedBook" 
+                  [book]="selectedBook"
+                  (close)="closeBookDetails()">
+</app-book-details>

@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+
+<div class="status-filters">
+  <button (click)="changeFilter('want-to-read')" 
+          [class.active]="filterStatus === 'want-to-read'">
+    Хочу прочитать
+  </button>
+  <button (click)="changeFilter('reading')" 
+          [class.active]="filterStatus === 'reading'">
+    В процессе
+  </button>
+  <button (click)="changeFilter('completed')" 
+          [class.active]="filterStatus === 'completed'">
+    Прочитано
+  </button>
+</div>
+
+<div class="favorites-list">
+  <!-- Проверка, есть ли книги в выбранном фильтре -->
+  <div *ngIf="!hasBooksInFilter()" class="no-favorites-message">
+    <div class="message-content">
+      <div class="icon">📚</div>
+      <h3>Нет добавленных книг</h3>
+      <p *ngIf="filterStatus === 'want-to-read'">
+        У вас пока нет книг в списке "Хочу прочитать". 
+        Добавьте книги с главной страницы!
+      </p>
+      <p *ngIf="filterStatus === 'reading'">
+        У вас пока нет книг в списке "В процессе". 
+        Начните читать книгу из "Хочу прочитать"!
+      </p>
+      <p *ngIf="filterStatus === 'completed'">
+        У вас пока нет прочитанных книг. 
+        Отметьте книги как "Прочитано", когда закончите их читать!
+      </p>
+      <button class="go-to-books-btn" routerLink="/books">
+        Перейти к книгам
+      </button>
+    </div>
+  </div>
+
+  <!-- Показ книг только если они есть -->
+  <div *ngFor="let book of filteredBooks()" 
+       class="book-card" 
+       [class.editing]="editingBookId === book.id">
+    
+    <div class="book-header">
+      <div class="book-title-author">
+        <!-- Название книги кликабельное -->
+        <span class="title clickable-title" (click)="openBookDetails(book)">{{ book.title }}</span> 
+        <span class="author">{{ book.author }}</span>
+      </div>
+      
+      <!-- Карандашик справа -->
+      <button *ngIf="editingBookId !== (book.id || '')" 
+              class="edit-btn" 
+              (click)="startEditing(book.id); $event.stopPropagation()">✏️</button>
+    </div>
+
+    <!-- Звезды рейтинга -->
+    <div *ngIf="book.status === 'completed'" class="rating-section">
+      <span class="rating-label">Оценка:</span>
+      <div class="stars">
+        <span *ngFor="let star of [1,2,3,4,5]" 
+              (click)="rateBook(book, star); $event.stopPropagation()"
+              [class.active]="star <= (book.rating || 0)"
+              class="star">
+          ★
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="editingBookId === book.id" class="edit-panel">
+      <div class="form-group">
+        <label>Статус:</label>
+        <select [(ngModel)]="book.status" (ngModelChange)="changeStatus(book, $event)">
+          <option value="want-to-read">Хочу прочитать</option>
+          <option value="reading">В процессе</option>
+          <option value="completed">Прочитано</option>
+        </select>
+      </div>
+
+      <!-- Показывать выбор оценки только когда статус "Прочитано" -->
+      <div *ngIf="book.status === 'completed'" class="form-group">
+        <label>Оценка:</label>
+        <select [(ngModel)]="book.rating" (ngModelChange)="rateBook(book, $event)" class="rating-select">
+          <option value="" disabled selected>Выберите оценку</option>
+          <option [value]="1">1 ★</option>
+          <option [value]="2">2 ★★</option>
+          <option [value]="3">3 ★★★</option>
+          <option [value]="4">4 ★★★★</option>
+          <option [value]="5">5 ★★★★★</option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button class="close-btn" (click)="stopEditing(); $event.stopPropagation()">✖️ Закрыть</button>
+        <button class="remove-btn" (click)="removeFromFavorites(book); $event.stopPropagation()">
+          🗑️ Удалить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-notification></app-notification>
+
+<app-book-details *ngIf="showBookDetails && selectedBook" 
+                  [book]="selectedBook"
+                  (close)="closeBookDetails()">
+</app-book-details>

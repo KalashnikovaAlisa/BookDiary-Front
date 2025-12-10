@@ -1,0 +1,67 @@
+image: node:22
+
+stages:
+  - install
+  - lint
+  - test
+  - build
+  - deploy
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
+variables:
+  NODE_VERSION: "22.0.0"
+  PUPPETEER_SKIP_DOWNLOAD: "true"
+
+install_dependencies:
+  stage: install
+  script:
+    - node --version
+    - npm --version
+    - npm ci --cache .npm --prefer-offline
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+  dependencies:
+    - install_dependencies
+
+unit_tests:
+  stage: test
+  script:
+    - apt-get update && apt-get install -y chromium || apt-get install -y chromium-browser
+    - export CHROME_BIN=$(which chromium || which chromium-browser)
+    - node -v
+    - npm --version
+    - npm run test:ci
+  dependencies:
+    - install_dependencies
+
+build_production:
+  stage: build
+  script:
+    - npm run build -- --configuration production --base-href="/${CI_PROJECT_NAME}/"
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+deploy_to_pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r dist/course-work/* public/
+  artifacts:
+    paths:
+      - public
+  pages: true
+
+
